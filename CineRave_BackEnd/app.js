@@ -2,15 +2,16 @@ require('dotenv').config();
 const express = require('express');
 require('./config/dbconfig');
 const cors = require('cors');
-
+const Movie = require('./models/modelScheema');
+const { RandomNumber } = require('./utils/otpHelper');
+const { SendEmail } = require('./utils/emailHelper');
 const PORT = process.env.PORT;
+
 const app = express();
 
 app.use(cors());
 
 app.use(express.json());
-
-const Movie = require('./models/modelScheema');
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to home page</h1>');
@@ -69,13 +70,35 @@ app.post('/movies', async (req, res) => {
   }
 });
 
-app.post('/otps', (req, res) => {
-  const { email } = req.query;
-  console.log(email);
+app.post('/otps', async (req, res) => {
+  try {
+    const { email } = req.query;
+    console.log(email);
 
-  res.status(200).json({
-    status: 'Success',
-  });
+    if (!email) {
+      res.status(400).json({
+        status: 'failure',
+        message: 'Email is not present in the parameter',
+      });
+      return;
+    }
+
+    const otp = RandomNumber();
+    console.log(otp);
+
+    const isEmailsent = await SendEmail(email, otp);
+    console.log(isEmailsent);
+
+    res.status(200).json({
+      status: 'success',
+    });
+  } catch (error) {
+    console.log('Error in otp: ', error.message);
+    res.status(500).json({
+      status: 'failure',
+      message: 'Internal server error',
+    });
+  }
 });
 
 app.patch('/movies/:MovieId', async (req, res) => {
