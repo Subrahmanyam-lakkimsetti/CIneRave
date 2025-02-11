@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import NavBar from './navBar';
-import { FaPlay, FaStar, FaTrash } from 'react-icons/fa';
+import {
+  FaCross,
+  FaEdit,
+  FaPlay,
+  FaStar,
+  FaTimes,
+  FaTrash,
+} from 'react-icons/fa';
 
 const MoreDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState({});
   const [value, setvalue] = useState(0);
+  const [edit, setedit] = useState(-1);
+  const [commentObj, setcommentObj] = useState({});
 
   const getData = async () => {
     const resp = await fetch(`http://localhost:4007/movies/${id}`);
@@ -41,6 +50,8 @@ const MoreDetails = () => {
       console.log('success');
       getData();
     }
+    e.target.review.value = '';
+    // e.target.rating.value = 0//;
   };
 
   const hanldeClick = async (e, id) => {
@@ -57,6 +68,37 @@ const MoreDetails = () => {
       console.log('Success');
       getData();
     }
+  };
+
+  const handleChange = (key, value) => {
+    setcommentObj((prev) => {
+      const newobj = { ...prev };
+      newobj[key] = value;
+      // console.log(newobj.comment);
+      return newobj;
+    });
+  };
+
+  const handleSubmitChanges = async (id) => {
+    console.log(id);
+    console.log(commentObj);
+    const resp = await fetch(
+      `http://localhost:4007/movies/${movie._id}/reviews/${id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(commentObj),
+        headers: {
+          'content-type': 'application/json',
+        },
+      }
+    );
+    const respObj = await resp.json();
+    if (respObj.status === 'success') {
+      console.log('success');
+      getData();
+    }
+
+    setedit(-1);
   };
 
   return (
@@ -142,7 +184,19 @@ const MoreDetails = () => {
               return (
                 <div className="single-card" key={index}>
                   <h5>{rev.userName}</h5>
-                  <p className="comment-line">{rev.comment}</p>
+                  <p className="comment-line">
+                    {index === edit ? (
+                      <textarea
+                        className="input input-review"
+                        value={commentObj.comment}
+                        onChange={(e) => {
+                          handleChange('comment', e.target.value);
+                        }}
+                      />
+                    ) : (
+                      rev.comment
+                    )}
+                  </p>
                   <div className="rating-number">
                     <FaStar />
                     <p className="number">{rev.rating}</p>
@@ -153,6 +207,42 @@ const MoreDetails = () => {
                   >
                     <FaTrash />
                   </button>
+
+                  {index === edit ? (
+                    <>
+                      <div>
+                        <button
+                          onClick={() => handleSubmitChanges(rev._id)}
+                          className="submit-changes"
+                        >
+                          Submit Changes
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className="cancel"
+                          onClick={() => {
+                            setedit(-1);
+                            setcommentObj({});
+                          }}
+                        >
+                          <FaTimes className="icon" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div>
+                      <button
+                        onClick={() => {
+                          setcommentObj(rev);
+                          setedit(index);
+                        }}
+                        className="edit"
+                      >
+                        <FaEdit />
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}

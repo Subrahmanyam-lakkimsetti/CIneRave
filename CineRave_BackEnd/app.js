@@ -69,6 +69,15 @@ app.post('/movies', async (req, res) => {
   }
 });
 
+app.post('/otps', (req, res) => {
+  const { email } = req.query;
+  console.log(email);
+
+  res.status(200).json({
+    status: 'Success',
+  });
+});
+
 app.patch('/movies/:MovieId', async (req, res) => {
   try {
     const { MovieId } = req.params;
@@ -101,6 +110,25 @@ app.patch('/movies/:MovieId', async (req, res) => {
       message: 'Internal server error',
     });
   }
+});
+
+app.patch('/movies/:MovieId/reviews/:reviewId', async (req, res) => {
+  const { MovieId, reviewId } = req.params;
+  const { comment } = req.body;
+  console.log(comment);
+  const data = await Movie.findByIdAndUpdate(
+    MovieId,
+    {
+      $set: {
+        'reviews.$[elem].comment': comment,
+      },
+    },
+    { new: true, arrayFilters: [{ 'elem._id': reviewId }] }
+  );
+  res.status(200).json({
+    status: 'success',
+    data,
+  });
 });
 
 app.delete('/movies/:MovieId', async (req, res) => {

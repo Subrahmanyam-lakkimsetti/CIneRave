@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaPlay } from 'react-icons/fa';
 import './movieList.css';
 import { Link } from 'react-router';
+import BackgroundImage from './backgroundImage';
 const MoviesList = () => {
   const [movies, setmovies] = useState([]);
 
@@ -17,6 +18,8 @@ const MoviesList = () => {
   }, []);
   return (
     <>
+      <BackgroundImage />
+      <h1 className="movie-heading-top-rated">Top Rated Movies🔥</h1>
       <div className="cards">
         {movies.map((movie) => {
           return (
