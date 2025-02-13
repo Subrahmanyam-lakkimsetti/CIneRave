@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import './backgroundImage.css';
 const BackgroundImage = () => {
   return (
@@ -20,7 +21,10 @@ const BackgroundImage = () => {
               shape the conversation!
             </p>
           </p>
-          <button className="button main-button">Get Started</button>
+
+          <Link to="/login">
+            <button className="button main-button">Get Started</button>
+          </Link>
         </div>
       </div>
     </>

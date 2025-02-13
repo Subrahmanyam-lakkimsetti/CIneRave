@@ -27,10 +27,15 @@ body {
 }
 
 .description {
-  margin: 0.5rem 1rem;
+  margin: 0.2rem 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.star-main {
+  padding-top: 3.5px;
+  padding-right: 2px;
 }
 
 .play-button {
@@ -144,6 +149,10 @@ li {
 }
 
 .link {
+  text-decoration: none;
+}
+
+.link-about {
   text-decoration: none;
 }
 

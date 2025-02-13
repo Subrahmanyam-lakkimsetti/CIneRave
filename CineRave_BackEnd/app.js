@@ -5,10 +5,13 @@ const cors = require('cors');
 const Movie = require('./models/modelScheema');
 const { RandomNumber } = require('./utils/otpHelper');
 const { SendEmail } = require('./utils/emailHelper');
+const OtpModel = require('./models/otpScheema');
+const User = require('./models/usersModel');
+const bcrypt = require('bcrypt');
+
 const PORT = process.env.PORT;
 
 const app = express();
-
 app.use(cors());
 
 app.use(express.json());
@@ -53,6 +56,117 @@ app.get('/movies/:id', async (req, res) => {
   }
 });
 
+app.post('/users/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (email === '' || password === '') {
+      res.status(400).json({
+        status: 'fail',
+        message: 'email and password are required',
+      });
+      return;
+    }
+
+    const userExists = await User.findOne({ email });
+    if (!userExists) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Email does not exists',
+      });
+      return;
+    }
+
+    const { password: newpassword } = userExists;
+
+    const verifiedPassword = await bcrypt.compare(password, newpassword);
+
+    if (!verifiedPassword) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'password incorrect',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      status: 'success',
+      email: email,
+    });
+  } catch (error) {
+    console.log('error in log in: ', error.message);
+    res.status(500).json({
+      status: 'fail',
+      message: 'Internal server error',
+    });
+  }
+});
+
+app.post('/users/register', async (req, res) => {
+  try {
+    const { email, otp, password } = req.body;
+    console.log(otp, password);
+
+    const isEmailExists = await OtpModel.findOne({
+      email: email,
+    }).sort('-createdAt');
+
+    if (!isEmailExists) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'invalid email',
+      });
+      return;
+    }
+
+    const { otp: newotp } = isEmailExists;
+
+    const isOtpCorrect = await bcrypt.compare(otp.toString(), newotp);
+
+    if (!isOtpCorrect) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'invalid otp',
+      });
+      return;
+    }
+
+    const existinguser = await User.findOne({ email });
+    if (existinguser) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Email already exists',
+      });
+      return;
+    }
+
+    const hashedpassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      email,
+      password: hashedpassword,
+    });
+
+    res.status(200).json({
+      status: 'success',
+      user: newUser,
+    });
+  } catch (error) {
+    console.log('Error in users post: ', error.message);
+    if (error.name === 'ValidationError') {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Email already exists',
+      });
+      return;
+    }
+    res.status(500).json({
+      status: 'fail',
+      message: 'Internal server error',
+    });
+  }
+});
+
 app.post('/movies', async (req, res) => {
   try {
     const reqData = req.body;
@@ -83,14 +197,35 @@ app.post('/otps', async (req, res) => {
       return;
     }
 
+    const userExists = await User.findOne({
+      email: email,
+    });
+
+    if (userExists) {
+      console.log(userExists);
+      res.status(400).json({
+        status: 'failure',
+        message: 'Email already exists',
+      });
+      return;
+    }
+
     const otp = RandomNumber();
     console.log(otp);
 
-    const isEmailsent = await SendEmail(email, otp);
-    console.log(isEmailsent);
+    await SendEmail(email, otp);
+
+    const newSalt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp.toString(), newSalt);
+    console.log(hashedOtp);
 
     res.status(200).json({
       status: 'success',
+    });
+
+    await OtpModel.create({
+      email,
+      otp: hashedOtp,
     });
   } catch (error) {
     console.log('Error in otp: ', error.message);

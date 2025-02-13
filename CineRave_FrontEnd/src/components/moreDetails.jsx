@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import NavBar from './navBar';
-import {
-  FaCross,
-  FaEdit,
-  FaPlay,
-  FaStar,
-  FaTimes,
-  FaTrash,
-} from 'react-icons/fa';
+import { FaEdit, FaPlay, FaStar, FaTimes, FaTrash } from 'react-icons/fa';
+import Footer from './footer';
 
 const MoreDetails = () => {
   const { id } = useParams();
@@ -249,6 +243,7 @@ const MoreDetails = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

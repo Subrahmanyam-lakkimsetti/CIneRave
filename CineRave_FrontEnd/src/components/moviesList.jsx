@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { FaPlay } from 'react-icons/fa';
+import { FaPlay, FaStar } from 'react-icons/fa';
 import './movieList.css';
 import { Link } from 'react-router';
 import BackgroundImage from './backgroundImage';
+import Footer from './footer';
 const MoviesList = () => {
   const [movies, setmovies] = useState([]);
 
@@ -38,7 +39,10 @@ const MoviesList = () => {
                       return <p className="single">{gn} / </p>;
                     })}
                   </div>
-                  <p>Rating: {movie.rating}</p>
+                  <p>
+                    Rating: <FaStar className="star-main" />
+                    {movie.rating}
+                  </p>
                 </div>
                 <a href={movie.trailer} target="_blank">
                   <button className="play-button">
@@ -53,6 +57,7 @@ const MoviesList = () => {
           );
         })}
       </div>
+      <Footer />
     </>
   );
 };
