@@ -22,10 +22,10 @@ const MoviesList = () => {
       <BackgroundImage />
       <h1 className="movie-heading-top-rated">Top Rated Movies🔥</h1>
       <div className="cards">
-        {movies.map((movie) => {
+        {movies.map((movie, index) => {
           return (
             <>
-              <div className="card">
+              <div className="card" key={index}>
                 <div className="imagediv">
                   <Link to={`/moreDetails/${movie._id}`}>
                     <img className="image" src={movie.poster} />

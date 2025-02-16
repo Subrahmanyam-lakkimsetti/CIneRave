@@ -8,16 +8,35 @@ const { SendEmail } = require('./utils/emailHelper');
 const OtpModel = require('./models/otpScheema');
 const User = require('./models/usersModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 const PORT = process.env.PORT;
 
 const app = express();
-app.use(cors());
+// app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+    origin: 'http://localhost:5173',
+  })
+);
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to home page</h1>');
+});
+
+app.use((req, res, next) => {
+  try {
+    const { authorization } = req.cookies;
+    console.log(authorization);
+    next();
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 app.get('/movies', async (req, res) => {
@@ -56,112 +75,35 @@ app.get('/movies/:id', async (req, res) => {
   }
 });
 
-app.post('/users/login', async (req, res) => {
+app.patch('/movies/:MovieId', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { MovieId } = req.params;
+    const { userName, comment, rating, ...updateData } = req.body;
+    const newReview = { userName, comment, rating };
 
-    if (email === '' || password === '') {
-      res.status(400).json({
-        status: 'fail',
-        message: 'email and password are required',
-      });
-      return;
+    let updateQuery = {};
+    if (newReview) {
+      updateQuery.$push = { reviews: newReview };
     }
 
-    const userExists = await User.findOne({ email });
-    if (!userExists) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Email does not exists',
-      });
-      return;
+    if (Object.keys(updateData).length > 0) {
+      updateQuery.$set = updateData;
     }
+    console.log(updateQuery);
 
-    const { password: newpassword } = userExists;
-
-    const verifiedPassword = await bcrypt.compare(password, newpassword);
-
-    if (!verifiedPassword) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'password incorrect',
-      });
-      return;
-    }
-
+    // const { _id, ...reqData } = req.body;
+    const data = await Movie.findByIdAndUpdate(MovieId, updateQuery, {
+      returnDocument: 'after',
+      runValidators: true,
+    });
     res.status(200).json({
-      status: 'success',
-      email: email,
+      status: 'sucess',
+      data,
     });
   } catch (error) {
-    console.log('error in log in: ', error.message);
+    console.log('Error in Patch', error.message);
     res.status(500).json({
-      status: 'fail',
-      message: 'Internal server error',
-    });
-  }
-});
-
-app.post('/users/register', async (req, res) => {
-  try {
-    const { email, otp, password } = req.body;
-    console.log(otp, password);
-
-    const isEmailExists = await OtpModel.findOne({
-      email: email,
-    }).sort('-createdAt');
-
-    if (!isEmailExists) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'invalid email',
-      });
-      return;
-    }
-
-    const { otp: newotp } = isEmailExists;
-
-    const isOtpCorrect = await bcrypt.compare(otp.toString(), newotp);
-
-    if (!isOtpCorrect) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'invalid otp',
-      });
-      return;
-    }
-
-    const existinguser = await User.findOne({ email });
-    if (existinguser) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Email already exists',
-      });
-      return;
-    }
-
-    const hashedpassword = await bcrypt.hash(password, 10);
-
-    const newUser = await User.create({
-      email,
-      password: hashedpassword,
-    });
-
-    res.status(200).json({
-      status: 'success',
-      user: newUser,
-    });
-  } catch (error) {
-    console.log('Error in users post: ', error.message);
-    if (error.name === 'ValidationError') {
-      res.status(400).json({
-        status: 'fail',
-        message: 'Email already exists',
-      });
-      return;
-    }
-    res.status(500).json({
-      status: 'fail',
+      status: 'Failure',
       message: 'Internal server error',
     });
   }
@@ -186,7 +128,7 @@ app.post('/movies', async (req, res) => {
 
 app.post('/otps', async (req, res) => {
   try {
-    const { email } = req.query;
+    const { email, name } = req.body;
     console.log(email);
 
     if (!email) {
@@ -236,35 +178,129 @@ app.post('/otps', async (req, res) => {
   }
 });
 
-app.patch('/movies/:MovieId', async (req, res) => {
+app.post('/users/register', async (req, res) => {
   try {
-    const { MovieId } = req.params;
-    const { userName, comment, rating, ...updateData } = req.body;
-    const newReview = { userName, comment, rating };
+    const { email, otp, password, name } = req.body;
+    console.log(otp, password);
 
-    let updateQuery = {};
-    if (newReview) {
-      updateQuery.$push = { reviews: newReview };
+    const isEmailExists = await OtpModel.findOne({
+      email: email,
+    }).sort('-createdAt');
+
+    if (!isEmailExists) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'invalid email',
+      });
+      return;
     }
 
-    if (Object.keys(updateData).length > 0) {
-      updateQuery.$set = updateData;
-    }
-    console.log(updateQuery);
+    const { otp: newotp } = isEmailExists;
 
-    // const { _id, ...reqData } = req.body;
-    const data = await Movie.findByIdAndUpdate(MovieId, updateQuery, {
-      returnDocument: 'after',
-      runValidators: true,
+    const isOtpCorrect = await bcrypt.compare(otp.toString(), newotp);
+
+    if (!isOtpCorrect) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'invalid otp',
+      });
+      return;
+    }
+
+    const existinguser = await User.findOne({ email });
+    if (existinguser) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Email already exists',
+      });
+      return;
+    }
+
+    const hashedpassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      email,
+      password: hashedpassword,
+      name,
     });
+
     res.status(200).json({
-      status: 'sucess',
-      data,
+      status: 'success',
+      user: newUser,
     });
   } catch (error) {
-    console.log('Error in Patch', error.message);
+    console.log('Error in users post: ', error.message);
+    if (error.name === 'ValidationError') {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Email already exists',
+      });
+      return;
+    }
     res.status(500).json({
-      status: 'Failure',
+      status: 'fail',
+      message: 'Internal server error',
+    });
+  }
+});
+
+app.post('/users/login', async (req, res) => {
+  try {
+    const { email, password, _id } = req.body;
+
+    if (email === '' || password === '') {
+      res.status(400).json({
+        status: 'fail',
+        message: 'email and password are required',
+      });
+      return;
+    }
+
+    const userExists = await User.findOne({ email });
+    if (!userExists) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'incorrect email or password',
+      });
+      return;
+    }
+
+    const { password: newpassword } = userExists;
+
+    const verifiedPassword = await bcrypt.compare(password, newpassword);
+
+    if (!verifiedPassword) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'password incorrect',
+      });
+      return;
+    }
+
+    const token = jwt.sign(
+      {
+        email,
+        _id,
+      },
+      process.env.JWT_SECRET_KEY
+    );
+
+    // console.log(token);
+
+    res.cookie('authorization', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    res.status(200).json({
+      status: 'success',
+      email: email,
+    });
+  } catch (error) {
+    console.log('error in log in: ', error.message);
+    res.status(500).json({
+      status: 'fail',
       message: 'Internal server error',
     });
   }
@@ -313,6 +349,7 @@ app.delete('/movies/:MovieId/reviews/:ReviewId', async (req, res) => {
     const data = await Movie.findByIdAndUpdate(MovieId, {
       $pull: { reviews: { _id: ReviewId } },
     });
+
     res.status(200).json({
       status: 'success',
       data,

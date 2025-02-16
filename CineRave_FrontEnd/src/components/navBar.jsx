@@ -1,9 +1,6 @@
-import { FaSearch } from 'react-icons/fa';
 import './movieList.css';
-import { useRef } from 'react';
 import { Link } from 'react-router';
 const NavBar = () => {
-  const inputref = useRef(null);
   return (
     <div className="Nav">
       <div className="left">

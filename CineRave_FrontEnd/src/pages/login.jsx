@@ -1,8 +1,8 @@
-import NavBar from './navBar';
+import NavBar from '../components/navBar';
 import './login.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import Footer from './footer';
+import Footer from '../components/footer';
 const Login = () => {
   const [login, setlogin] = useState({});
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ const Login = () => {
     try {
       const resp = await fetch('http://localhost:4007/users/login', {
         method: 'POST',
+        credentials: 'include',
         body: JSON.stringify(login),
         headers: {
           'content-type': 'application/json',

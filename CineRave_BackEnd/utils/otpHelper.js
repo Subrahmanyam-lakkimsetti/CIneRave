@@ -1,5 +1,5 @@
 const RandomNumber = () => {
-  return Math.floor(Math.random() * 99999 + 10000);
+  return Math.floor(Math.random() * 90000 + 10000);
 };
 
 module.exports = {
