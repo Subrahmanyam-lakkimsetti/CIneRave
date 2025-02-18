@@ -42,7 +42,7 @@ const Signup = ({ User, handleLogout }) => {
       console.log('hello');
       e.preventDefault();
       const resp = await fetch(
-        import.meta.env.BACKEND_URL + '/users/register',
+        import.meta.env.VITE_BACKEND_URL + '/users/register',
         {
           method: 'POST',
           body: JSON.stringify({ ...otpdetails, ...details }),
@@ -70,7 +70,7 @@ const Signup = ({ User, handleLogout }) => {
     console.log('in submit function');
     console.log(otpdetails);
     try {
-      const resp = await fetch(`http://localhost:4007/otps`, {
+      const resp = await fetch(import.meta.env.VITE_BACKEND_URL + '/otps', {
         method: 'POST',
         body: JSON.stringify(otpdetails),
         headers: {

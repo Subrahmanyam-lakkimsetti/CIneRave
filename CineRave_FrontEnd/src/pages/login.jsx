@@ -19,14 +19,17 @@ const Login = ({ afterLogin, User, handleLogout }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const resp = await fetch('http://localhost:4007/users/login', {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(login),
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
+      const resp = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/users/login',
+        {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify(login),
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      );
       const respObj = await resp.json();
       if (respObj.status === 'fail') {
         alert(respObj.message);

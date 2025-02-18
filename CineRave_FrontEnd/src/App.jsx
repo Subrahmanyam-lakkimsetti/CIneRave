@@ -33,7 +33,7 @@ const App = () => {
   const getLoggedUserInfo = async () => {
     try {
       console.log('Hello');
-      const resp = await fetch('http://localhost:4007/users/me', {
+      const resp = await fetch(import.meta.env.VITE_BACKEND_URL + '/users/me', {
         credentials: 'include',
       });
       const respObj = await resp.json();
@@ -52,9 +52,12 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      const resp = await fetch('http://localhost:4007/user/logout', {
-        credentials: 'include',
-      });
+      const resp = await fetch(
+        import.meta.env.VITE_BACKEND_URL + '/user/logout',
+        {
+          credentials: 'include',
+        }
+      );
       const respObj = await resp.json();
       console.log(respObj);
       if (respObj.status === 'success') {

@@ -14,7 +14,9 @@ const MoreDetails = ({ User, handleLogout }) => {
   const navigate = useNavigate();
 
   const getData = async () => {
-    const resp = await fetch(`http://localhost:4007/movies/${id}`);
+    const resp = await fetch(
+      import.meta.env.VITE_BACKEND_URL + `/movies/${id}`
+    );
     const resdata = await resp.json();
     const data = resdata.data;
     setMovie(data);
@@ -44,13 +46,16 @@ const MoreDetails = ({ User, handleLogout }) => {
       return;
     }
 
-    const resp = await fetch(`http://localhost:4007/movies/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(newObj),
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
+    const resp = await fetch(
+      import.meta.env.VITE_BACKEND_URL + `/movies/${id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(newObj),
+        headers: {
+          'content-type': 'application/json',
+        },
+      }
+    );
     const respObj = await resp.json();
     // console.log(respObj);
 
@@ -65,7 +70,7 @@ const MoreDetails = ({ User, handleLogout }) => {
   const hanldeClick = async (e, id) => {
     console.log('deleted', movie._id, id);
     const resp = await fetch(
-      `http://localhost:4007/movies/${movie._id}/reviews/${id}`,
+      import.meta.env.VITE_BACKEND_URL + `/movies/${movie._id}/reviews/${id}`,
       {
         method: 'DELETE',
       }
@@ -91,7 +96,7 @@ const MoreDetails = ({ User, handleLogout }) => {
     console.log(id);
     console.log(commentObj);
     const resp = await fetch(
-      `http://localhost:4007/movies/${movie._id}/reviews/${id}`,
+      import.meta.env.VITE_BACKEND_URL + `/movies/${movie._id}/reviews/${id}`,
       {
         method: 'PATCH',
         body: JSON.stringify(commentObj),
