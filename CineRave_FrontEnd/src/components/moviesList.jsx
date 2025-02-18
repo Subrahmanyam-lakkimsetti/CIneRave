@@ -9,7 +9,12 @@ const MoviesList = () => {
   const [movies, setmovies] = useState([]);
 
   const getData = async () => {
-    const moviesRes = await fetch(import.meta.env.VITE_BACKEND_URL + '/movies');
+    const moviesRes = await fetch(
+      import.meta.env.VITE_BACKEND_URL + '/movies',
+      {
+        credentials: 'include',
+      }
+    );
     const Movies = await moviesRes.json();
     const data = Movies.data;
     setmovies(data);
