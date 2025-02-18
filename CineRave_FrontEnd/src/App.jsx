@@ -24,7 +24,7 @@ const App = () => {
   console.log(User);
 
   const afterLogin = (resObj) => {
-    alert('login sucessful....');
+    alert('login sucessfull');
     const newUser = { isLoggedin: true, name: resObj.data.name };
     localStorage.setItem('isLoggedIn', true);
     setUser(newUser);

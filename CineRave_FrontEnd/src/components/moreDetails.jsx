@@ -78,7 +78,7 @@ const MoreDetails = ({ User, handleLogout }) => {
     const resObj = await resp.json();
     console.log(resObj.status);
     if (resObj.status === 'success') {
-      // console.log('Success');
+      alert('deleted sucessfully');
       getData();
     }
   };
