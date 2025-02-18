@@ -49,3 +49,71 @@
 .main-button:hover {
   transform: scale(1.05);
 }
+
+/* Tablet View (max-width: 768px) */
+@media (max-width: 768px) {
+  .background-image-main {
+    width: 90%; /* Adjusted width to avoid full screen */
+    height: 500px;
+    margin: 0 auto; /* Centering the image */
+    display: block;
+  }
+
+  .heading-main {
+    width: 90%;
+    left: 1rem;
+    top: 3rem;
+  }
+
+  .main-headline {
+    font-size: 1.7rem;
+  }
+
+  .main-description {
+    font-size: 0.95rem;
+  }
+
+  .key-para {
+    font-size: 0.9rem;
+  }
+
+  .main-button {
+    width: 60%;
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+/* Mobile View (max-width: 480px) */
+@media (max-width: 480px) {
+  .background-image-main {
+    width: 100%; /* Smaller width for mobile */
+    height: 400px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .heading-main {
+    width: 95%;
+    left: 1rem;
+    top: 6rem;
+  }
+
+  .main-headline {
+    font-size: 1.2rem;
+  }
+
+  .main-description {
+    font-size: 0.7rem;
+    line-height: 1.3rem;
+  }
+
+  .key-para {
+    display: none; /* Hide additional content for cleaner mobile UI */
+  }
+
+  .main-button {
+    width: 30%;
+    font-size: 13px;
+  }
+}

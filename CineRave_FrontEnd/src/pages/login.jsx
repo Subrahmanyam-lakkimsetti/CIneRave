@@ -3,7 +3,7 @@ import './login.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import Footer from '../components/footer';
-const Login = () => {
+const Login = ({ afterLogin, User, handleLogout }) => {
   const [login, setlogin] = useState({});
   const navigate = useNavigate();
 
@@ -32,16 +32,18 @@ const Login = () => {
         alert(respObj.message);
         return;
       }
-      alert('login sucessfully');
+
+      // alert('login sucessfully');
+      afterLogin(respObj);
       navigate('/');
     } catch (error) {
-      console.log('error in login', error.message);
+      alert(error.message);
     }
   };
 
   return (
     <>
-      <NavBar />
+      <NavBar User={User} handleLogout={handleLogout} />
       <div className="main-content">
         <div className="login-form">
           <form onSubmit={handleLogin} className="form-details-login">
@@ -52,6 +54,7 @@ const Login = () => {
               type="email"
               onChange={(e) => handleChange('email', e.target.value)}
               placeholder="Email"
+              required
             />
             <label>Password</label>
             <input
@@ -59,6 +62,7 @@ const Login = () => {
               type="password"
               placeholder="Password"
               onChange={(e) => handleChange('password', e.target.value)}
+              required
             />
             <button className="login-button-main">Log in</button>
 

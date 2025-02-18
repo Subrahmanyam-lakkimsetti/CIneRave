@@ -33,7 +33,7 @@ const MoviesList = () => {
                 </div>
                 <div className="description">
                   <h2>{movie.title}</h2>
-                  {console.log(movie.genere)}
+
                   <div className="genere_main">
                     {movie.genere.map((gn) => {
                       return <p className="single">{gn} / </p>;

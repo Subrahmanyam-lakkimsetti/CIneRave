@@ -4,7 +4,7 @@ import './login.css';
 import NavBar from '../components/navBar';
 import { useState } from 'react';
 import { Link } from 'react-router';
-const Signup = () => {
+const Signup = ({ User, handleLogout }) => {
   const [otpdetails, setOtpDetails] = useState({});
   const [isotpSent, setisotpSent] = useState(false);
   const [details, setdetails] = useState({});
@@ -89,7 +89,7 @@ const Signup = () => {
 
   return (
     <>
-      <NavBar />
+      <NavBar User={User} handleLogout={handleLogout} />
 
       {isotpSent ? (
         <div className="main-content">

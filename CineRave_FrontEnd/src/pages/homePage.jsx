@@ -1,10 +1,10 @@
 import MoviesList from '../components/moviesList';
 import NavBar from '../components/navBar';
 
-const HomePage = () => {
+const HomePage = ({ User, handleLogout }) => {
   return (
     <>
-      <NavBar />
+      <NavBar User={User} handleLogout={handleLogout} />
       <MoviesList />
     </>
   );

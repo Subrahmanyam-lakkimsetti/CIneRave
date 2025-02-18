@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import NavBar from './navBar';
 import { FaEdit, FaPlay, FaStar, FaTimes, FaTrash } from 'react-icons/fa';
 import Footer from './footer';
 
-const MoreDetails = () => {
+const MoreDetails = ({ User, handleLogout }) => {
   const { id } = useParams();
   const [movie, setMovie] = useState({});
   const [value, setvalue] = useState(0);
   const [edit, setedit] = useState(-1);
   const [commentObj, setcommentObj] = useState({});
+  const navigate = useNavigate();
 
   const getData = async () => {
     const resp = await fetch(`http://localhost:4007/movies/${id}`);
@@ -24,11 +25,23 @@ const MoreDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (User.isLoggedin === false) {
+      alert('login to post the review');
+      navigate('/login');
+      return;
+    }
+
     const newObj = {
-      userName: 'User123@123',
+      userName: User.name,
       comment: e.target.review.value,
       rating: e.target.rating.value,
     };
+
+    if (!newObj.comment || newObj.rating <= '1') {
+      alert('comment or rating must be greater then one');
+      return;
+    }
 
     const resp = await fetch(`http://localhost:4007/movies/${id}`, {
       method: 'PATCH',
@@ -38,7 +51,7 @@ const MoreDetails = () => {
       },
     });
     const respObj = await resp.json();
-    console.log(respObj);
+    // console.log(respObj);
 
     if (respObj.status === 'sucess') {
       console.log('success');
@@ -59,7 +72,7 @@ const MoreDetails = () => {
     const resObj = await resp.json();
     console.log(resObj.status);
     if (resObj.status === 'success') {
-      console.log('Success');
+      // console.log('Success');
       getData();
     }
   };
@@ -98,7 +111,7 @@ const MoreDetails = () => {
   return (
     <>
       {/* /nav bar and the movie details */}
-      <NavBar />
+      <NavBar User={User} handleLogout={handleLogout} />
       <div className="main-image">
         <img src={movie.background} className="back-image" />
         <div className="content">
@@ -177,7 +190,7 @@ const MoreDetails = () => {
             {movie.reviews?.map((rev, index) => {
               return (
                 <div className="single-card" key={index}>
-                  <h5>{rev.userName}</h5>
+                  <h4>{rev.userName}</h4>
                   <p className="comment-line">
                     {index === edit ? (
                       <textarea
@@ -186,6 +199,8 @@ const MoreDetails = () => {
                         onChange={(e) => {
                           handleChange('comment', e.target.value);
                         }}
+                        required
+                        maxlength="30"
                       />
                     ) : (
                       rev.comment
@@ -195,12 +210,17 @@ const MoreDetails = () => {
                     <FaStar />
                     <p className="number">{rev.rating}</p>
                   </div>
-                  <button
-                    className="delete-button"
-                    onClick={(e) => hanldeClick(e, rev._id)}
-                  >
-                    <FaTrash />
-                  </button>
+
+                  {User.name === rev.userName ? (
+                    <button
+                      className="delete-button"
+                      onClick={(e) => hanldeClick(e, rev._id)}
+                    >
+                      <FaTrash />
+                    </button>
+                  ) : (
+                    ''
+                  )}
 
                   {index === edit ? (
                     <>
@@ -226,15 +246,19 @@ const MoreDetails = () => {
                     </>
                   ) : (
                     <div>
-                      <button
-                        onClick={() => {
-                          setcommentObj(rev);
-                          setedit(index);
-                        }}
-                        className="edit"
-                      >
-                        <FaEdit />
-                      </button>
+                      {User.name === rev.userName ? (
+                        <button
+                          onClick={() => {
+                            setcommentObj(rev);
+                            setedit(index);
+                          }}
+                          className="edit"
+                        >
+                          <FaEdit />
+                        </button>
+                      ) : (
+                        ''
+                      )}
                     </div>
                   )}
                 </div>

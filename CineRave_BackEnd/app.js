@@ -23,20 +23,9 @@ app.use(
 );
 
 app.use(express.json());
-app.use(cookieParser());
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to home page</h1>');
-});
-
-app.use((req, res, next) => {
-  try {
-    const { authorization } = req.cookies;
-    console.log(authorization);
-    next();
-  } catch (error) {
-    console.log(error.message);
-  }
 });
 
 app.get('/movies', async (req, res) => {
@@ -246,9 +235,9 @@ app.post('/users/register', async (req, res) => {
 
 app.post('/users/login', async (req, res) => {
   try {
-    const { email, password, _id } = req.body;
+    const { email, password } = req.body;
 
-    if (email === '' || password === '') {
+    if (!email || !password) {
       res.status(400).json({
         status: 'fail',
         message: 'email and password are required',
@@ -265,7 +254,7 @@ app.post('/users/login', async (req, res) => {
       return;
     }
 
-    const { password: newpassword } = userExists;
+    const { password: newpassword, name, _id } = userExists;
 
     const verifiedPassword = await bcrypt.compare(password, newpassword);
 
@@ -281,8 +270,12 @@ app.post('/users/login', async (req, res) => {
       {
         email,
         _id,
+        name,
       },
-      process.env.JWT_SECRET_KEY
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: '1d',
+      }
     );
 
     // console.log(token);
@@ -295,7 +288,10 @@ app.post('/users/login', async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      email: email,
+      data: {
+        email,
+        name,
+      },
     });
   } catch (error) {
     console.log('error in log in: ', error.message);
@@ -304,6 +300,56 @@ app.post('/users/login', async (req, res) => {
       message: 'Internal server error',
     });
   }
+});
+
+app.use(cookieParser());
+
+const authorizationMiddleWare = (req, res, next) => {
+  const { authorization } = req.cookies;
+  console.log('auth: ', authorization);
+  if (!authorization) {
+    return res.status(401).json({
+      status: 'fail',
+      message: 'unauthorized',
+    });
+  }
+
+  jwt.verify(authorization, process.env.JWT_SECRET_KEY, (error, data) => {
+    if (error) {
+      console.log(error.message);
+      res.status(401).json({
+        status: 'fail',
+        message: 'authrozation failed',
+      });
+    } else {
+      console.log(data);
+      req.User = data;
+      next();
+    }
+  });
+};
+
+app.get('/users/me', authorizationMiddleWare, (req, res) => {
+  try {
+    const { email, name } = req.User;
+    res.status(200).json({
+      status: 'success',
+      data: {
+        email,
+        name,
+      },
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
+app.get('/user/logout', (req, res) => {
+  res.clearCookie('authorization');
+  res.json({
+    status: 'success',
+    message: 'logout sucessfully',
+  });
 });
 
 app.patch('/movies/:MovieId/reviews/:reviewId', async (req, res) => {
