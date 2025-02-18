@@ -41,13 +41,16 @@ const Signup = ({ User, handleLogout }) => {
     try {
       console.log('hello');
       e.preventDefault();
-      const resp = await fetch('http://localhost:4007/users/register', {
-        method: 'POST',
-        body: JSON.stringify({ ...otpdetails, ...details }),
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
+      const resp = await fetch(
+        import.meta.env.BACKEND_URL + '/users/register',
+        {
+          method: 'POST',
+          body: JSON.stringify({ ...otpdetails, ...details }),
+          headers: {
+            'content-type': 'application/json',
+          },
+        }
+      );
       const respObj = await resp.json();
 
       if (respObj.status === 'fail') {

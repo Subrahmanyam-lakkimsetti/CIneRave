@@ -27,3 +27,23 @@ footer {
   margin-top: 1rem;
   font-size: x-small;
 }
+
+@media (max-width: 520px) {
+  footer {
+    margin-top: 1.5rem;
+    padding: 0.5rem;
+  }
+
+  .footer-icons li {
+    font-size: 15px;
+  }
+
+  .footer-icons {
+    gap: 0.4rem;
+  }
+
+  .copyright {
+    margin-top: 0.3rem;
+    font-size: 0.4rem;
+  }
+}

@@ -26,7 +26,6 @@ body {
 
 .login-form {
   display: flex;
-  /* border: 1px solid white; */
   border-radius: 0.5rem;
   padding: 1.8rem;
   width: 25%;
@@ -83,4 +82,54 @@ body {
 
 label {
   margin-top: 0.6rem;
+}
+
+@media (max-width: 768px) {
+  .login-form {
+    width: 50%;
+    padding: 1rem;
+  }
+
+  .input-details {
+    width: 30rem;
+  }
+
+  .login-button-main {
+    width: 50%;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-form {
+    width: 80%;
+    padding: 1rem;
+  }
+
+  .input-details {
+    width: 90%;
+  }
+
+  .login-button-main {
+    width: 100%;
+  }
+
+  .information {
+    font-size: 12px;
+  }
+
+  .login-button-main {
+    width: 30%;
+  }
+
+  .form-details-login {
+    flex: 1;
+  }
+
+  .signup {
+    font-size: 12px;
+  }
+
+  .login-heading {
+    font-size: 1.2rem;
+  }
 }

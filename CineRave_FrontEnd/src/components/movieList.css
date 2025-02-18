@@ -12,18 +12,20 @@ body {
 .image {
   width: 100%;
   height: 350px;
+  border-radius: 20px;
 }
 
 .cards {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.2rem;
+  gap: 0.5rem;
   row-gap: 2rem;
   /* padding: 10px; */
 }
 
 .card {
   border: 1px solid white;
+  border-radius: 20px;
 }
 
 .description {
@@ -44,6 +46,8 @@ body {
   border-top: 1px solid white;
   cursor: pointer;
   background-color: transparent;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 .TrailerText {

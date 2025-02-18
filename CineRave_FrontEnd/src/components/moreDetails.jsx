@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import NavBar from './navBar';
 import { FaEdit, FaPlay, FaStar, FaTimes, FaTrash } from 'react-icons/fa';
 import Footer from './footer';
+import './responsive.css';
 
 const MoreDetails = ({ User, handleLogout }) => {
   const { id } = useParams();

@@ -6,7 +6,7 @@
 
 .content-main {
   position: relative;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 .heading-main {
@@ -60,7 +60,7 @@
   }
 
   .heading-main {
-    width: 90%;
+    width: 60%;
     left: 1rem;
     top: 3rem;
   }
@@ -85,7 +85,7 @@
 }
 
 /* Mobile View (max-width: 480px) */
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .background-image-main {
     width: 100%; /* Smaller width for mobile */
     height: 400px;
@@ -94,7 +94,7 @@
   }
 
   .heading-main {
-    width: 95%;
+    width: 70%;
     left: 1rem;
     top: 6rem;
   }
@@ -105,7 +105,7 @@
 
   .main-description {
     font-size: 0.7rem;
-    line-height: 1.3rem;
+    line-height: 1.02rem;
   }
 
   .key-para {
@@ -114,6 +114,7 @@
 
   .main-button {
     width: 30%;
-    font-size: 13px;
+    padding: 8px;
+    font-size: 10px;
   }
 }

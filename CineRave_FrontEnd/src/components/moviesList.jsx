@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FaPlay, FaStar } from 'react-icons/fa';
 import './movieList.css';
+import './responsive.css';
 import { Link } from 'react-router';
 import BackgroundImage from './backgroundImage';
 import Footer from './footer';
