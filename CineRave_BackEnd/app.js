@@ -49,7 +49,7 @@ app.get('/movies/:id', async (req, res) => {
     const { id } = req.params;
 
     const data = await Movie.findById(id);
-    console.log(data);
+    // console.log(data);
 
     res.status(200).json({
       status: 'success',
@@ -78,7 +78,7 @@ app.patch('/movies/:MovieId', async (req, res) => {
     if (Object.keys(updateData).length > 0) {
       updateQuery.$set = updateData;
     }
-    console.log(updateQuery);
+    // console.log(updateQuery);
 
     // const { _id, ...reqData } = req.body;
     const data = await Movie.findByIdAndUpdate(MovieId, updateQuery, {
@@ -118,7 +118,7 @@ app.post('/movies', async (req, res) => {
 app.post('/otps', async (req, res) => {
   try {
     const { email, name } = req.body;
-    console.log(email);
+    // console.log(email);
 
     if (!email) {
       res.status(400).json({
@@ -142,7 +142,7 @@ app.post('/otps', async (req, res) => {
     }
 
     const otp = RandomNumber();
-    console.log(otp);
+    // console.log(otp);
 
     await SendEmail(email, otp);
 

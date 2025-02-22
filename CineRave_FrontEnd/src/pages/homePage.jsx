@@ -10,4 +10,4 @@ const HomePage = ({ User, handleLogout }) => {
   );
 };
 
-export default HomePage;
+export default HomePage;    

@@ -19,7 +19,7 @@ const NavBar = ({ User, handleLogout }) => {
           <Link to={'/'} className="link">
             <li>Home</li>
           </Link>
-          <li>Futured</li>
+          <li>Futured</li>  
           <a href="#footer" className="link-about">
             <li>About</li>
           </a>
@@ -27,7 +27,7 @@ const NavBar = ({ User, handleLogout }) => {
             {User.isLoggedin ? (
               <button className="auth" onClick={handleLogout}>
                 Logout
-              </button>
+              </button>       
             ) : (
               <Link to="/login">
                 <button className="auth">Sigin/Sinup</button>
