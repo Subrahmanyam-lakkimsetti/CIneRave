@@ -12,5 +12,5 @@ How it works
 
 
 credentials for testing purpose
-  --> email:- subrahmanyam1234@gmail.com
+  --> email:- subrahmanyam@gmail.com
       password:- 1234
