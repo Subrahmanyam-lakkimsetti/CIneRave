@@ -5,6 +5,12 @@ How it works
   --> login with the credentials they are given at the time of registeration.
   --> In the landing page user sees different movies where user can click on the poster and share their response in that page.
   --> and user able to see the others revies to know before going to that movie
+  --> and even you can use this website in the mobile also.
 
 --> this website movies data are made by the custom apis, from the backend. in future we will add the featured section. where users can see the upcomming movie details. 
     after release of that movie the movie is added in the landing page from there users can share experience. 
+
+
+credentials for testing purpose
+  --> email:- subrahmanyam1234@gmail.com
+      password:- 1234
